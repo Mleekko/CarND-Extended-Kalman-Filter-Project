@@ -5,7 +5,7 @@
 #include "Eigen/Dense"
 
 class Tools {
-public:
+ public:
   /**
    * Constructor.
    */
@@ -27,6 +27,9 @@ public:
    */
   Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd &x_state);
 
+ private:
+  Eigen::VectorXd rmse;
+  Eigen::MatrixXd Hj;
 };
 
 #endif  // TOOLS_H_

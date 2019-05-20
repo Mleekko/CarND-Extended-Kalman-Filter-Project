@@ -8,13 +8,16 @@ using std::invalid_argument;
 using std::logic_error;
 using std::to_string;
 
-Tools::Tools() {}
+Tools::Tools() {
+  rmse = VectorXd(4);
+  Hj = MatrixXd(3, 4);
+}
 
-Tools::~Tools() {}
+Tools::~Tools() {
+}
 
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth) {
-  VectorXd rmse(4);
   rmse << 0, 0, 0, 0;
 
   if (estimations.empty()) {
@@ -24,7 +27,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   if (estimations.size() != ground_truth.size()) {
     throw invalid_argument(
         "The estimations and ground truth vectors should be of same size! "
-        + to_string(estimations.size()) + " vs " + to_string(ground_truth.size()));
+            + to_string(estimations.size()) + " vs " + to_string(ground_truth.size()));
   }
 
   for (int i = 0; i < estimations.size(); ++i) {
@@ -62,8 +65,6 @@ MatrixXd Tools::CalculateJacobian(const VectorXd &x_state) {
   }
 
   // compute the Jacobian matrix
-  MatrixXd Hj(3, 4);
-
   Hj << p_x_c2, p_y_c2, 0, 0,
       -(p_y / c1), (p_x / c1), 0, 0,
       p_y * vp_pv_c3, p_x * -vp_pv_c3, p_x_c2, p_y_c2;

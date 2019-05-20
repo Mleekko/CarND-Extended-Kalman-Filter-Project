@@ -40,7 +40,7 @@ int main() {
   vector<VectorXd> ground_truth;
 
   h.onMessage([&fusionEKF, &tools, &estimations, &ground_truth]
-                  (uWS::WebSocket <uWS::SERVER> ws, char *data, size_t length,
+                  (uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                    uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -116,8 +116,8 @@ int main() {
 
           double p_x = fusionEKF.ekf_.x_(0);
           double p_y = fusionEKF.ekf_.x_(1);
-          double v1  = fusionEKF.ekf_.x_(2);
-          double v2  = fusionEKF.ekf_.x_(3);
+          double v1 = fusionEKF.ekf_.x_(2);
+          double v2 = fusionEKF.ekf_.x_(3);
 
           estimate(0) = p_x;
           estimate(1) = p_y;
@@ -131,8 +131,8 @@ int main() {
           json msgJson;
           msgJson["estimate_x"] = p_x;
           msgJson["estimate_y"] = p_y;
-          msgJson["rmse_x"] =  RMSE(0);
-          msgJson["rmse_y"] =  RMSE(1);
+          msgJson["rmse_x"] = RMSE(0);
+          msgJson["rmse_y"] = RMSE(1);
           msgJson["rmse_vx"] = RMSE(2);
           msgJson["rmse_vy"] = RMSE(3);
           auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
