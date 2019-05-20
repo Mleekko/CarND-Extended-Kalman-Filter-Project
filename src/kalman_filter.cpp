@@ -17,9 +17,10 @@ KalmanFilter::KalmanFilter() {}
 KalmanFilter::~KalmanFilter() {}
 
 void KalmanFilter::Init() {
+  // State vector
   x_ = VectorXd(4);
+  x_ << 0, 0, 0, 0;
 
-  // FIXME:
   // State covariance matrix P
   P_ = MatrixXd(4, 4);
   P_ << 1, 0, 0, 0,
@@ -27,18 +28,19 @@ void KalmanFilter::Init() {
       0, 0, 1000, 0,
       0, 0, 0, 1000;
 
-  // The initial transition matrix F_
+  // Transition matrix F_
   F_ = MatrixXd(4, 4);
   F_ << 1, 0, 1, 0,
       0, 1, 0, 1,
       0, 0, 1, 0,
       0, 0, 0, 1;
 
-  // H_ =
-  // R_ =
+  // Process covariance matrix
   Q_ = MatrixXd(4, 4);
+
   h_x = VectorXd(3);
   x_size = x_.size();
+  I = MatrixXd::Identity(x_size, x_size);
 }
 
 void KalmanFilter::Predict() {
@@ -66,7 +68,7 @@ VectorXd KalmanFilter::CalculateRadarY(const VectorXd &z) {
   float vy = x_(3);
 
   // convert from cartesian coordinates to polar coordinates
-  float rho = max(sqrt(px * px + py * py), 0.0001f);
+  float rho = max(sqrt(px * px + py * py), EPSILON);
   float phi = atan2(py, px);
   float rho_dot = (px * vx + py * vy) / rho;
 
@@ -94,6 +96,5 @@ void KalmanFilter::DoUpdate(const VectorXd &y) {
 
   // new estimate
   x_ = x_ + (K * y);
-  MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 }

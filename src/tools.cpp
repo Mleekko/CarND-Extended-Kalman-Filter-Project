@@ -30,7 +30,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
             + to_string(estimations.size()) + " vs " + to_string(ground_truth.size()));
   }
 
-  for (int i = 0; i < estimations.size(); ++i) {
+  for (int i = 0; i < estimations.size(); i++) {
     VectorXd residual = estimations[i] - ground_truth[i];
     residual = residual.array() * residual.array();
     rmse += residual;
@@ -43,21 +43,21 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
 MatrixXd Tools::CalculateJacobian(const VectorXd &x_state) {
   // recover state parameters
-  float p_x = x_state(0);
-  float p_y = x_state(1);
-  float v_x = x_state(2);
-  float v_y = x_state(3);
+  float px = x_state(0);
+  float py = x_state(1);
+  float vx = x_state(2);
+  float vy = x_state(3);
 
   // pre-compute a set of terms to avoid repeated calculation
-  float c1 = p_x * p_x + p_y * p_y;
+  float c1 = px * px + py * py;
   float c2 = std::sqrt(c1);
   float c3 = (c1 * c2);
 
-  float vp = v_x * p_y;
-  float pv = v_y * p_x;
-  float vp_pv_c3 = (vp - pv) / c3;
-  float p_x_c2 = p_x / c2;
-  float p_y_c2 = p_y / c2;
+  float v_p = vx * py;
+  float p_v = vy * px;
+  float vp_pv_c3 = (v_p - p_v) / c3;
+  float p_x_c2 = px / c2;
+  float p_y_c2 = py / c2;
 
   // prevent division by zero
   if (std::fabs(c1) < 0.0001) {
@@ -66,8 +66,8 @@ MatrixXd Tools::CalculateJacobian(const VectorXd &x_state) {
 
   // compute the Jacobian matrix
   Hj << p_x_c2, p_y_c2, 0, 0,
-      -(p_y / c1), (p_x / c1), 0, 0,
-      p_y * vp_pv_c3, p_x * -vp_pv_c3, p_x_c2, p_y_c2;
+      -(py / c1), (px / c1), 0, 0,
+      py * vp_pv_c3, px * -vp_pv_c3, p_x_c2, p_y_c2;
 
   return Hj;
 }
